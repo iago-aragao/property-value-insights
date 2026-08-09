@@ -159,7 +159,7 @@ async function checkHealth() {
     const health = await response.json();
     setApiStatus("online", `API online · modelo ${health.model_version}`);
   } catch (_) {
-    setApiStatus("offline", "API indisponível no momento; tente novamente em instantes.");
+    setApiStatus("offline", "API em repouso no momento. Execute uma previsão para reativá-la automaticamente; a primeira resposta pode levar alguns instantes.");
   }
 }
 
