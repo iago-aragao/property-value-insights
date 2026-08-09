@@ -1,563 +1,327 @@
-# Property Value Insights — Agent Instructions
+# AI Engineering Standard
 
 ## Purpose
 
-This file defines the repository-wide operating rules for planning, implementing,
-reviewing, and validating changes to Property Value Insights.
+This file defines the default operating standard for AI agents working in this repository.
+It is intentionally general and reusable across software, data, ML, API, automation, and
+product-facing projects.
 
-It complements `.github/copilot-instructions.md` and the current repository
-documentation. It does not replace the active GitHub Issue, which remains the
-primary source of task scope and acceptance criteria.
+The goal is not maximum activity. The goal is **correct, reviewable, reproducible work with
+honest evidence and controlled risk**.
 
-These instructions apply to the entire repository. A more specific `AGENTS.md`
-inside a subdirectory takes precedence for files within that subtree.
+Repository-specific instructions, contracts, Issue acceptance criteria, and user directions
+take precedence over this document when they are more specific.
 
-## Project priorities
+## Core priorities
 
 Preserve, in this order:
 
-1. reproducibility;
-2. backward compatibility;
-3. safe model serving;
-4. artifact and data integrity;
-5. traceable technical decisions;
-6. small, reviewable changes;
-7. accurate communication of results and limitations.
+1. correctness and factual integrity;
+2. backward compatibility unless change is explicitly requested;
+3. security, data, and artifact integrity;
+4. reproducibility and verifiable behavior;
+5. maintainability and clear architecture;
+6. small, traceable, reversible changes;
+7. accurate communication to developers and stakeholders.
 
-Do not treat an AI-generated suggestion, historical note, review comment, future
-possibility, or prior conversation as an approved requirement. Confirm it against
-the active Issue and the current repository before acting.
+Prefer evidence over confidence. Never claim that something works, passes, is safe, is ready,
+or is complete unless the available evidence supports that claim.
 
 ## Sources of truth
 
-Before planning or editing, inspect only the sources relevant to the task:
+Before changing anything, resolve the task against the current repository rather than memory
+or assumptions. Use the following precedence:
 
-1. the active Issue, including scope, acceptance criteria, validation, risks, and
-   out-of-scope items;
-2. the approved implementation plan;
-3. the current implementation and automated tests;
-4. `.github/copilot-instructions.md`;
-5. `docs/REVIEW_AND_DELIVERY_PROCESS.md`;
-6. the affected contract or governance document;
-7. `pyproject.toml`, `uv.lock`, and `.github/workflows/ci.yml`;
-8. model manifests, hashes, and release-readiness checks when applicable.
+1. explicit user instructions for the current task;
+2. the active Issue, specification, or acceptance criteria;
+3. repository-local `AGENTS.md` files and project instructions;
+4. current contracts, configuration, CI, tests, and documentation;
+5. current implementation;
+6. historical notes, old PRs, comments, TODOs, and prior AI suggestions.
 
-For API work, compare implementation, Pydantic schemas, tests, generated OpenAPI
-behavior, and `docs/API_CONTRACT.md`.
+Historical material is context, not automatic authorization.
 
-For model, data, or artifact work, compare code, tests, `docs/DATA_CONTRACT.md`,
-`docs/MODELING_PROTOCOL.md`, `docs/ARTIFACT_CONTRACT.md`, `docs/MODEL_CARD.md`,
-`docs/CONTINUOUS_LEARNING.md`, and `artifacts/model_manifest.json` as applicable.
+If two authoritative sources conflict in a way that changes architecture, compatibility,
+security, data policy, model behavior, dependencies, release behavior, or user-visible
+semantics, do not resolve the conflict silently. Surface it for a decision.
 
-If the Issue conflicts with current code, tests, contracts, artifact metadata, or
-governance rules, do not choose silently. Record the conflict and return it for a
-user decision.
+## Default autonomy
 
-## Agent roles
+For an approved task, the agent is authorized to work autonomously inside the task scope. It
+may:
 
-### PVI Planner Reviewer
+- inspect the repository, history, Issues, PRs, tests, CI, and documentation;
+- create, edit, move, or delete task-related files;
+- run non-destructive commands, tests, linting, builds, and validation;
+- create a working branch;
+- create commits and push to non-protected working branches;
+- open and update a pull request;
+- respond to review findings and correct confirmed issues;
+- make small related adjustments required to satisfy the approved acceptance criteria.
 
-The Planner Reviewer is read-only by default.
+The agent must **not** without explicit authorization:
 
-It may:
+- merge a pull request;
+- push directly to `main` or another protected branch;
+- force-push, rewrite history, use destructive reset/clean operations, or bypass protections;
+- change secrets, credentials, permissions, branch protection, billing, or external account
+  settings;
+- introduce a breaking change, architectural redesign, dependency/toolchain switch, model
+  replacement, data-policy change, or release strategy change outside the approved scope.
 
-- inspect files and Git history;
-- search the repository;
-- run non-destructive checks;
-- reproduce behavior without changing tracked outputs;
-- produce a focused implementation plan;
-- review a completed diff independently.
+Merge is always a supervised action unless the user explicitly authorizes that specific merge.
 
-It must not:
+## Before editing
 
-- edit files during planning or review;
-- implement its own plan;
-- regenerate tracked data, reports, notebooks, models, or artifacts;
-- expand the Issue;
-- convert optional suggestions into required changes;
-- request implementation of an unresolved architectural, product, modeling,
-  governance, dependency, or compatibility decision.
+Do enough investigation to understand the task, but do not reread the entire repository without
+reason.
 
-During final review, inspect the active Issue, approved plan, changed files, diff,
-relevant tests, and necessary surrounding context. Do not reread the entire
-repository without a task-specific reason.
+Before implementation:
 
-The Planner Reviewer may edit only when the user explicitly authorizes a separate
-editing task.
+- inspect the relevant code, tests, configuration, documentation, and CI;
+- confirm whether the requested behavior already exists;
+- identify the smallest change that satisfies the requirement;
+- identify compatibility, security, data, deployment, and artifact risks;
+- discover the repository's actual commands and tooling instead of assuming them;
+- define how the change will be validated.
 
-### PVI Executor
+Ask the user only when a material decision cannot be resolved safely from the repository. Do not
+ask for information that the codebase, configuration, connected tools, or existing documentation
+can answer.
 
-The Executor is the write-enabled implementation role.
+## Planning standard
 
-It must:
+For non-trivial work, form a concise implementation plan before editing. A good plan states:
 
-- implement only an approved Issue and approved plan;
-- edit only files required by that plan;
-- run focused tests while implementing;
-- preserve existing architecture and public behavior by default;
-- stop when a new decision is required;
-- report deviations, blockers, failed checks, and unverified behavior exactly.
-
-It must not:
-
-- redesign the architecture;
-- make product or serving decisions independently;
-- add related improvements that were not approved;
-- resolve ambiguity by guessing;
-- weaken tests or validation to make checks pass;
-- silently switch to another executor or fallback model.
-
-If the configured executor is unavailable or insufficient, stop and report the
-limitation. Do not select an unconfigured fallback automatically.
-
-## Permanent repository authorization
-
-For an approved task, the PVI Planner Reviewer is authorized without requesting
-confirmation at every step to:
-
-- read, create, edit, move, and delete task-related files;
-- run commands, tests, linting, validation, and inspection;
-- plan, implement, review, and correct changes;
-- create and update Issues;
-- create, switch, and publish working branches;
-- create commits;
-- push only to branches other than `main`;
-- open and update pull requests;
-- respond to reviews and correct findings within the approved scope; and
-- make related adjustments required to complete the approved task correctly.
-
-This authorization does not permit a merge, direct push to `main`, force push,
-history rewriting, destructive reset or clean operations, changes to secrets,
-branch protection, permissions, or external repository settings, or unrelated
-changes. The user performs merges unless they explicitly authorize Terra to
-merge that specific pull request.
-
-## Multi-agent delegation and A2A
-
-Terra may act as the task orchestrator and delegate focused work to configured
-agents when delegation materially improves cost, speed, specialization, or
-independent verification.
-
-Approved default routing:
-
-- Terra with medium reasoning: scope analysis, planning, ticket creation,
-  coordination, architectural decisions, and result consolidation;
-- OpenCode with DeepSeek V4 Flash at High: focused implementation of approved,
-  well-specified tickets and relevant test execution;
-- a fresh Terra reviewer with High reasoning: independent diff review,
-  compatibility analysis, regression review, and final verification.
-
-Do not add or switch to an unapproved provider automatically.
-
-Delegated tickets must define:
-
-- objective;
-- allowed files or components;
-- required behavior;
-- constraints and preserved behavior;
-- validation;
-- completion evidence; and
-- stop conditions.
-
-Only one agent may write in a worktree at a time. Read-only investigation and
-review agents may operate concurrently. Parallel implementation requires
-isolated worktrees and non-overlapping tickets.
-
-A delegated agent must return:
-
-- work performed;
-- files changed or inspected;
-- tests and commands actually executed;
-- exact outcomes;
-- blockers, risks, limitations, and unresolved decisions; and
-- deviations from the ticket.
-
-The orchestrator must not silently broaden a ticket, accept unsupported claims,
-or treat a child-agent response as verified evidence. A reviewer must not
-approve its own implementation; use a fresh reviewer session or child agent
-that did not write the diff. After two failed attempts for the same unresolved
-cause, stop and return the blocker to the user instead of creating an agent
-loop.
-
-## Required task workflow
-
-Work on one Issue at a time.
-
-1. Create one Traycer Task and one isolated worktree for the Issue.
-2. Confirm the worktree starts from the intended current base.
-3. The Planner Reviewer investigates and produces a small plan.
-4. Confirm the plan is authorized by the active Issue and user instructions.
-5. The Executor implements only the approved plan.
-6. The Executor runs focused tests during implementation.
-7. Run the full suite and all applicable repository checks before a pull request.
-8. The Planner Reviewer independently reviews the diff.
-9. The Planner Reviewer classifies confirmed review findings.
-10. The Executor corrects only the approved findings.
-11. Record final validations with exact outcomes.
-12. Perform Git and GitHub write actions within the permanent authorization and
-    the active Issue; merge still requires explicit PR-specific authorization.
-
-Do not run parallel writers in the same worktree. Read-only investigation and
-review may run concurrently when it does not interfere with the active writer.
-
-Dependent Issues that modify overlapping files should be executed sequentially.
-Start the next dependent worktree from an updated base after the predecessor is
-integrated, unless the Planner Reviewer demonstrates that the changes are
-independent and the user approves parallel work.
-
-## Planning contract
-
-A Planner Reviewer plan must be concise and implementation-ready. Include:
-
-- Issue objective and classification;
-- confirmed current behavior or evidence;
-- files and components expected to change;
-- ordered implementation steps;
-- focused tests to add or update;
-- applicable full validation commands;
-- backward-compatibility impact;
-- model, data, artifact, security, and documentation risks;
+- the objective and confirmed current behavior;
+- the files or components expected to change;
+- the smallest ordered implementation steps;
+- tests or checks to add or run;
+- compatibility and operational risks;
 - explicit out-of-scope items;
-- stop conditions and unresolved decisions.
+- any decision that would require user approval.
 
-Separate:
+Do not convert optional improvements into requirements. Do not broaden a task merely because a
+related cleanup is convenient.
 
-- confirmed defect or contract divergence;
-- approved improvement;
-- documentation-only change;
-- maintenance work;
-- optional or future suggestion.
+## Implementation standard
 
-Do not produce a broad redesign when a smaller compatible change satisfies the
-Issue.
+- Preserve the established architecture and public interfaces by default.
+- Prefer explicit, readable code over cleverness or premature abstraction.
+- Reuse existing utilities and patterns before creating new ones.
+- Keep changes focused; avoid unrelated refactors, formatting churn, renames, or dependency
+  upgrades.
+- Use clear names, type information, and comments that explain intent or non-obvious constraints.
+- Do not suppress warnings, exceptions, validations, or tests merely to make a check pass.
+- Do not weaken existing guarantees to simplify implementation.
+- Add dependencies only when they are necessary and justified by the task.
+- Keep generated files, binary artifacts, model files, lockfiles, and hashes unchanged unless the
+  task actually requires changing them.
+- Update documentation and examples whenever user-visible behavior or a documented contract
+  changes.
 
-## Review contract
+A bug fix should include regression coverage when practical. A new behavior should include tests
+that prove both the intended path and the important failure or boundary cases.
 
-A Planner Reviewer diff review must classify each observation as one of:
+## Compatibility and contracts
 
-- confirmed blocking finding;
-- confirmed non-blocking finding;
+Backward compatibility is the default.
+
+Do not remove, rename, or silently change the meaning of existing public behavior such as:
+
+- API endpoints, methods, schemas, fields, status codes, or error semantics;
+- configuration variables;
+- CLI commands;
+- file formats or persistent data structures;
+- public functions, modules, or documented integration points;
+- model metadata or artifact contracts.
+
+Prefer additive changes. A breaking change requires explicit approval plus a clear migration and
+rollback story.
+
+When a formal contract exists, keep implementation, schemas, tests, examples, generated
+interfaces, and documentation consistent with it.
+
+## Validation standard
+
+Discover validation commands from the repository itself. Do not invent a formatter, package
+manager, test runner, build command, or deployment method because it is common elsewhere.
+
+Use this validation order:
+
+1. run the smallest relevant checks while implementing;
+2. add or update regression tests when behavior changes;
+3. test meaningful invalid, boundary, failure, and compatibility cases;
+4. run the repository's full required baseline before requesting merge, when feasible;
+5. reproduce integration, container, deployment, or UI behavior when the task affects it.
+
+For user-facing interfaces, validate representative desktop and mobile behavior when responsive
+layout or interaction changes. For APIs, verify implementation, schemas, generated API behavior,
+and examples remain aligned. For deployment changes, validate the runtime path rather than only
+static configuration.
+
+Report each important validation as exactly one of:
+
+- **Passed** — executed successfully;
+- **Failed** — executed and failed;
+- **Blocked** — could not execute because of a concrete limitation;
+- **Not run** — intentionally omitted, with the reason stated.
+
+Never describe an unexecuted check as passed or verified.
+
+## Review standard
+
+Implementation and review should be separated whenever practical. Prefer a fresh reviewer or
+fresh reasoning context that did not author the diff.
+
+Review the actual diff against the task, acceptance criteria, relevant contracts, tests, and
+surrounding code. Classify observations as:
+
+- blocking defect;
+- non-blocking confirmed defect;
 - missing evidence or validation;
 - optional suggestion;
 - no issue.
 
-Every confirmed finding must include:
-
-- affected file and relevant location;
-- observed evidence;
-- expected behavior or violated rule;
-- practical impact;
-- smallest reasonable correction;
-- required validation.
-
-Do not request changes based only on stylistic preference, speculative future
+A confirmed finding should identify the evidence, impact, smallest reasonable correction, and
+required validation. Do not request changes based only on personal style, speculative future
 needs, or unrelated cleanup.
 
-## Work classification and lifecycle
-
-Follow the classifications defined in
-`docs/REVIEW_AND_DELIVERY_PROCESS.md` and the Issue forms:
-
-- **Review:** investigation that produces evidence; it does not authorize
-  implementation automatically.
-- **Bug:** confirmed incorrect behavior or regression.
-- **Improvement:** approved additive change with a verifiable benefit.
-- **Maintenance:** engineering work such as agent instructions, automation,
-  dependencies, CI, templates, rulesets, or repository organization.
-- **Documentation:** exclusively documentary correction or expansion.
-- **Release:** versioning, packaging, release-candidate validation, or delivery
-  preparation.
-
-Current product work is organized as:
-
-- **Cycle 1 — Review and diagnosis:** inspect and register evidence.
-- **Cycle 2 — Corrections and stabilization:** implement confirmed bugs and
-  approved improvements.
-- **Cycle 3 — Final validation and delivery:** validate the complete submission
-  state and final runtime image.
-
-Each Issue should have one primary nature. Separate work when findings require
-different risks, acceptance criteria, or approvals.
-
-## Scope and implementation rules
-
-- Keep changes small, focused, traceable, and reversible.
-- Modify only files required by the approved plan.
-- Do not perform unrelated refactoring, formatting, renaming, or cleanup.
-- Inspect the affected code, tests, documentation, and configuration before
-  editing.
-- Reuse existing utilities before creating new abstractions.
-- Prefer explicit, readable code over unnecessary abstraction.
-- Use type hints consistently.
-- Preserve established public names and file locations unless change is approved.
-- Do not suppress warnings or exceptions without a documented reason.
-- Do not disable tests or reduce validation coverage to obtain a passing result.
-- Update documentation whenever the approved behavior or contract changes.
-- Keep optional ideas and future architecture outside the current diff.
-
-The repository targets Python 3.13 and uses `uv` with the version required by
-`pyproject.toml`. Do not replace the package manager or development tooling.
-
-Do not add, remove, or upgrade project dependencies unless the Issue and approved
-plan explicitly require it. A dependency change must use a dedicated, reviewable
-diff and update `uv.lock` consistently.
-
-Installing the already-declared locked environment for validation is not a
-dependency change.
-
-## Backward compatibility
-
-Backward compatibility is the default.
-
-Do not remove, rename, or change the meaning of existing:
-
-- API endpoints or HTTP methods;
-- request or response fields;
-- JSON formats;
-- HTTP status codes;
-- configuration variables;
-- model metadata;
-- public functions;
-- documented behavior.
-
-Prefer additive changes.
-
-A breaking change requires explicit Issue approval and a documented assessment
-of impact, probability, benefit, compatibility cost, reversibility, migration,
-rollback, and compatible alternatives.
-
-## API and serving guardrails
-
-- Keep API implementation, schemas, tests, OpenAPI, and `docs/API_CONTRACT.md`
-  consistent.
-- Preserve strict request validation and rejection of unexpected fields unless an
-  approved contract change states otherwise.
-- Preserve equivalent single and batch behavior where the contract requires it.
-- Distinguish syntax validation, domain validation, and out-of-distribution
-  detection.
-- Use accurate HTTP semantics and document only behavior implemented and tested.
-- Do not claim that a health endpoint verifies inference, external dependencies,
-  artifact rehashing, or any other condition that it does not actually verify.
-- Preserve request correlation, controlled internal errors, and the absence of
-  request payloads from application logs.
-- Never expose secrets, local paths, stack traces, credentials, or internal
-  implementation details in responses or logs.
-- API examples must be plausible, schema-valid, and consistent with the model
-  domain.
-- Do not introduce a new API version, partial batch behavior, rigid geographic
-  rejection, or cross-field validation without a specific approved Issue.
-
-## Data, model, and artifact guardrails
-
-- Do not rewrite raw challenge data.
-- Do not retrain, replace, or regenerate a model without explicit authorization.
-- Do not regenerate predictions, reports, notebooks, manifests, or model hashes
-  unless the approved task explicitly requires those outputs.
-- Do not manually edit a binary model artifact.
-- Keep artifact, manifest, package version, model version, feature order,
-  metadata, predictions, and SHA-256 hashes consistent.
-- Load Joblib artifacts only from trusted repository-controlled sources after the
-  existing integrity checks.
-- Do not change training or evaluation splits without approval.
-- Do not present the latest inspected diagnostic period as an untouched test set.
-- Do not present future examples without observed prices as accuracy evidence.
-- Never invent metrics, data properties, benchmarks, comparisons, or experiment
-  results.
-- Preserve the distinction between a statistical experiment winner, an
-  experimental candidate, and the model approved for serving.
-- A marginal metric improvement does not authorize serving promotion.
-- Treat demographic and geographic features as possible proxy-risk sources.
-- Preserve documented limitations, including restricted geographic and temporal
-  coverage and elevated error or underprediction for high-value properties.
-- Do not implement a specialized high-value model, multi-model routing, automatic
-  retraining, or automatic promotion without a specific approved Issue.
-- Promotion and rollback remain human-supervised decisions.
-
-## Code, language, and encoding
-
-- Write professional, impersonal, and objective code and documentation.
-- Use English for code identifiers, API fields, commands, class names, function
-  names, branches, and commit messages.
-- Use Brazilian Portuguese for repository communication, Issues, pull request
-  descriptions, and evaluator-facing explanations.
-- Preserve the existing language of each document unless translation is part of
-  the approved task.
-- Keep established technical terms in English when clearer or conventional.
-- Save text files as UTF-8 and preserve accented characters.
-- Avoid mojibake and unintended line-ending changes.
-- Respect the configured Ruff line length and lint rules.
-- Comments and docstrings should explain intent, constraints, or non-obvious risk,
-  not restate the code.
-- Do not add jokes, emojis, personal remarks, conversational comments, or vague
-  error messages to project files.
-
-## Validation
-
-Discover commands from the current repository before execution. Do not assume a
-tool or command merely because it is common in Python projects.
-
-### Locked environment
-
-```bash
-uv sync --locked --extra dev
-```
-
-### Focused validation during implementation
-
-Run the smallest relevant tests first, using an existing test path from
-`tests/`. For API work, for example:
-
-```bash
-uv run --locked pytest -q tests/test_api.py
-```
-
-Add or update regression tests when correcting behavior. Include relevant valid,
-invalid, boundary, failure, and compatibility cases.
-
-### Required repository baseline before a pull request
-
-```bash
-uv run --locked ruff check .
-uv run --locked pytest -q
-uv run --locked verify-property-release --project-root .
-uv run --locked pip-audit
-```
-
-The current CI configures Ruff linting but does not define a mandatory formatter
-check. Preserve existing formatting and do not invent an unconfigured formatting
-command. If repository configuration changes, follow the current configuration.
-
-`verify-property-release` checks package identity, required paths, environment
-contract, artifacts and hashes, ordered predictions, executed notebooks, relative
-Markdown links, and publication hygiene. Treat a failure as evidence to
-investigate, not as permission to weaken the check.
-
-### Docker and integration validation
-
-When the Issue affects serving, Docker, runtime dependencies, health behavior, or
-deployment configuration, use the supported local entry point:
-
-```bash
-docker compose up --build
-```
-
-Reproduce the applicable `container` job from `.github/workflows/ci.yml`: build
-the runtime image, run it as a non-privileged process with a read-only root
-filesystem and `no-new-privileges`, wait for health, and verify the public
-endpoints. Clean up any local container after validation.
-
-Do not run training, notebook execution, report generation, uncertainty analysis,
-or explainability generation as routine checks. Those commands can modify tracked
-outputs and require task-specific authorization.
-
-### Validation reporting
-
-Report every relevant check as exactly one of:
-
-- **Passed:** executed successfully.
-- **Failed:** executed and returned a failure.
-- **Blocked:** could not execute because of a stated environmental or permission
-  limitation.
-- **Not run:** intentionally omitted, with a stated reason.
-
-Never write “passed”, “approved”, “verified”, “complete”, or equivalent language
-for a command that was not executed successfully.
-
-For each blocked or unexecuted validation, record:
-
-- the exact command;
-- why it was not executed;
-- what remains unverified;
-- the residual risk;
-- how a maintainer can run it.
-
-## Git and security restrictions
-
-Without explicit user authorization, no agent may:
-
-- create a commit;
-- push;
-- open, update, close, approve, or merge a pull request;
-- create, switch, rename, delete, or force-update a branch;
-- delete or move files;
-- rewrite Git history;
-- run destructive reset or clean commands;
-- modify repository rules, external settings, secrets, or credentials;
-- add or upgrade dependencies;
-- change CI permissions;
-- modify model artifacts, manifests, versions, or hashes;
-- execute destructive commands.
-
-Read-only Git inspection such as `git status`, `git diff`, and `git log` is
-allowed when relevant.
-
-Never use `git reset --hard`, destructive `git clean`, force push, or history
-rewriting as a recovery shortcut.
-
-Do not push directly to `main`.
-
-If Git actions are explicitly authorized:
-
-- inspect `git status` and the complete diff first;
-- ensure only approved files are included;
-- inspect staged changes before committing;
-- use an objective Conventional Commit-style message consistent with
-  `docs/process/PROCESSO_GIT_GITHUB.md`;
-- do not use `Closes #<number>` unless the change fully completes the Issue;
-- wait for supervised approval and required checks before merge.
-
-Never include keys, tokens, passwords, credentials, private environment files,
-sensitive payloads, absolute local paths, caches, logs, or temporary files in
-tracked files, commits, pull requests, or agent responses.
-
-## Pull request descriptions
-
-When the user authorizes a pull request, keep its description proportional to
-the size, risk, and purpose of the change.
-
-A pull request should normally communicate:
-
-- **Resumo:** what changed and why;
-- **Mudanças:** the relevant implementation or documentation changes, when this
-  is not already clear from the summary;
-- **Validação:** only checks, tests, commands, or evidence actually executed;
-- **Impacto e limitações:** compatibility impact, residual risks, limitations,
-  or intentionally preserved behavior when relevant;
-- **Issue relacionada:** correct linkage to the Issue, when one exists.
-
-Omit sections that do not add useful information. Do not copy empty template
-sections, placeholder comments, tables without data, or generic final
-checklists into the pull request body.
-
-Classification, affected area, cycle, milestone, and priority should normally
-be recorded in the Issue and/or labels. Repeat them in the pull request only
-when they materially help the review.
-
-Use `Closes #<number>` only when the pull request fully completes the Issue.
-Otherwise use a non-closing reference such as `Relacionado a #<number>`.
-
-Complex or high-risk changes may require additional evidence, decisions,
-migration details, rollback information, security notes, model or artifact
-impact, or review focus. Add those details only when they are relevant.
-
-Never use vague summaries such as “minor fixes”, “various changes”, or
-“improvements”, and never claim that a validation passed unless it was
-executed successfully.
-
-## Completion reports
-
-The Executor's final report should be proportional to the task and include:
-
-- what was changed and intentionally preserved;
-- the relevant files or components;
-- validations grouped by real outcome: Passed, Failed, Blocked, or Not run;
-- compatibility impact, risks, limitations, and unresolved decisions;
-- Git or GitHub actions performed, or a statement that none were performed.
-
-Do not force empty fields or repeat information already stated clearly.
-
-The Planner Reviewer's final report must separate confirmed findings from
-optional suggestions and state whether the diff is ready for user approval.
-
-No agent may approve its own work or treat automated checks as a substitute for
-supervised review.
+After corrections, re-check the affected behavior and rerun the relevant validations. Do not
+assume a fix is correct merely because the code looks plausible.
+
+## Git and pull request workflow
+
+Use a focused branch and a focused PR for a coherent unit of work.
+
+Before committing or opening a PR:
+
+- inspect the complete diff;
+- confirm only intended files changed;
+- ensure no secrets, local paths, caches, logs, temporary files, or accidental artifacts were
+  included;
+- run the applicable validation baseline.
+
+Use objective commit messages consistent with the repository's conventions.
+
+A good PR description is proportional to the change and normally includes:
+
+- what changed and why;
+- important implementation details;
+- validation actually executed and its outcome;
+- compatibility impact, limitations, and residual risk when relevant;
+- correct Issue linkage when an Issue exists.
+
+Do not use vague summaries such as "minor fixes" or "various improvements". Do not claim the PR
+is complete while acceptance criteria, required checks, or confirmed review findings remain
+unresolved.
+
+Wait for required CI and supervised approval before merge. The agent does not merge unless the
+user explicitly authorizes that merge.
+
+## Security and operational safety
+
+- Never commit or expose secrets, tokens, credentials, private keys, sensitive payloads, or local
+  environment files.
+- Avoid leaking stack traces, internal paths, secrets, or unnecessary implementation details to
+  users or logs.
+- Use least privilege for CI, deployment, CORS, credentials, filesystem access, and runtime
+  permissions.
+- Do not disable security controls to make deployment easier without explicit approval.
+- Prefer reversible operations and preserve a clear rollback path.
+- Do not run destructive commands as a recovery shortcut.
+
+If an external platform requires an account-bound action the agent cannot perform, prepare the
+repository-side configuration first and ask the user only for the minimal account action needed.
+
+## Data, ML, and artifact work
+
+When the repository contains datasets, trained models, generated reports, or versioned artifacts:
+
+- do not rewrite raw source data without explicit authorization;
+- do not retrain, replace, regenerate, or manually edit model artifacts unless the task requires
+  it;
+- keep artifact metadata, versions, feature order, manifests, hashes, and published files
+  consistent;
+- never invent metrics, benchmarks, dataset properties, or evaluation results;
+- distinguish diagnostic evidence from untouched evaluation evidence;
+- check for leakage, target proxies, fairness/proxy risks, and distribution limitations when
+  relevant;
+- distinguish an experimental winner from a model approved for serving;
+- do not promote a model solely because one metric improved marginally;
+- keep promotion and rollback human-supervised unless an explicitly approved system says
+  otherwise.
+
+Document important limitations instead of hiding them behind a headline metric.
+
+## Releases and deployment
+
+A release is a product state, not just a successful build.
+
+When release work is in scope, verify that relevant versions, tags, package metadata,
+documentation, artifacts, manifests, and deployable images agree. Prefer validating the actual
+published artifact or image, ideally by immutable identifier or digest, rather than validating
+only the source tree that produced it.
+
+Do not publish or label something as a final release while required checks, runtime validation, or
+known blocking defects remain unresolved.
+
+## Documentation and stakeholder quality
+
+Documentation must describe reality, not intention.
+
+For evaluator- or stakeholder-facing repositories, prefer layered documentation:
+
+1. what the project solves and why it matters;
+2. main outcomes and limitations;
+3. the fastest realistic way to try it, with prerequisites stated explicitly;
+4. examples of real behavior;
+5. architecture and technical details for deeper readers.
+
+Quick-start instructions should be tested from a clean or representative environment. Make it
+clear when a full repository clone, external runtime, container engine, credentials, or other
+prerequisite is required.
+
+When practical, provide the lowest-friction evaluation path available: hosted demo first,
+containerized execution second, source installation for full reproduction. Never imply that a
+hosted demo, Docker image, package, or command works independently unless it has been verified to
+do so.
+
+Do not overstate production readiness, accuracy, fairness, security, scalability, or coverage.
+State limitations plainly.
+
+## Stop conditions
+
+Stop and request a decision before proceeding when the next step would require an unresolved:
+
+- breaking compatibility change;
+- destructive or irreversible operation;
+- architecture or product-policy decision;
+- security or permission change;
+- dependency or toolchain replacement;
+- data-policy, model-serving, or model-promotion decision;
+- secret, billing, or external account configuration;
+- interpretation of conflicting authoritative requirements.
+
+If the same approach fails repeatedly for the same underlying cause, do not create an agent loop.
+After a reasonable retry, report the blocker, evidence, residual impact, and next viable options.
+
+Do not silently switch to a materially different tool, provider, model, or execution strategy when
+that change affects cost, behavior, permissions, or expected output.
+
+## Completion standard
+
+Before declaring a task complete, confirm that:
+
+- the approved scope and acceptance criteria are satisfied;
+- the diff contains no unrelated changes;
+- relevant tests and required repository checks have known outcomes;
+- documentation matches implemented behavior;
+- compatibility, security, data, and artifact integrity were preserved or intentionally changed;
+- CI and deployment evidence are accounted for when relevant;
+- confirmed review findings are resolved or explicitly accepted;
+- residual risks, blocked checks, and intentionally unverified behavior are stated;
+- Git and GitHub actions performed are accurately reported.
+
+A concise completion report should say what changed, what was preserved, what was validated, what
+remains uncertain, and what action—if any—still requires the user's approval.
