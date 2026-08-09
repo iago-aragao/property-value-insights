@@ -45,10 +45,24 @@ If two authoritative sources conflict in a way that changes architecture, compat
 security, data policy, model behavior, dependencies, release behavior, or user-visible
 semantics, do not resolve the conflict silently. Surface it for a decision.
 
+## Work modes
+
+Distinguish the requested work mode before acting:
+
+- **Review / diagnosis:** inspect, reproduce, test, and report evidence. Do not silently fix
+  findings unless correction is explicitly part of the task.
+- **Implementation / stabilization:** change only the approved behavior and add the evidence
+  needed to prove it.
+- **Final validation / delivery:** validate the integrated state, public usage path, release
+  artifacts, documentation, and runtime behavior before declaring delivery complete.
+
+A finding from a review is not automatically an approved requirement. Separate confirmed defects
+from optional improvements and future ideas.
+
 ## Default autonomy
 
-For an approved task, the agent is authorized to work autonomously inside the task scope. It
-may:
+For an approved implementation task, the agent is authorized to work autonomously inside the task
+scope. It may:
 
 - inspect the repository, history, Issues, PRs, tests, CI, and documentation;
 - create, edit, move, or delete task-related files;
@@ -287,8 +301,24 @@ containerized execution second, source installation for full reproduction. Never
 hosted demo, Docker image, package, or command works independently unless it has been verified to
 do so.
 
+If public access is part of the evaluation path, test it without relying on the repository owner's
+authenticated session whenever practical.
+
 Do not overstate production readiness, accuracy, fairness, security, scalability, or coverage.
 State limitations plainly.
+
+## Communication and project style
+
+Keep repository content professional, objective, and concise.
+
+- Preserve the established language of each document unless translation is requested.
+- Follow the repository's existing conventions for identifiers, branches, commits, and technical
+  terminology.
+- Communicate with the user in the language they use unless they request otherwise.
+- Avoid jokes, emojis, personal remarks, conversational filler, and vague language in project
+  files, logs, errors, commits, and PR descriptions.
+- Comments and docstrings should explain intent, constraints, or risk rather than restating code.
+- Distinguish clearly between confirmed facts, inference, recommendations, and unverified ideas.
 
 ## Stop conditions
 
