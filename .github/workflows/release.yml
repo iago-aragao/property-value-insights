@@ -10,7 +10,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: umbura/property-value-insights
+  IMAGE_NAME: iago-aragao/property-value-insights
 
 jobs:
   publish:
@@ -54,7 +54,7 @@ jobs:
           labels: |
             org.opencontainers.image.title=Property Value Insights
             org.opencontainers.image.description=Reproducible residential property price inference API
-            org.opencontainers.image.source=https://github.com/Umbura/property-value-insights
+            org.opencontainers.image.source=https://github.com/iago-aragao/property-value-insights
             org.opencontainers.image.licenses=MIT
 
       - name: Build and publish image

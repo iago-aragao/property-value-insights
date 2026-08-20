@@ -23,30 +23,30 @@ def _settings() -> Settings:
 
 def test_cors_origin_parser_is_explicit_and_deduplicated() -> None:
     assert parse_cors_origins(
-        " https://umbura.github.io/, https://example.com, https://umbura.github.io "
-    ) == ("https://umbura.github.io", "https://example.com")
+        " https://iago-aragao.github.io/, https://example.com, https://iago-aragao.github.io "
+    ) == ("https://iago-aragao.github.io", "https://example.com")
     assert parse_cors_origins("") == ()
 
 
 def test_pages_origin_can_call_prediction_api() -> None:
-    app = create_cors_app(_settings(), origins=("https://umbura.github.io",))
+    app = create_cors_app(_settings(), origins=("https://iago-aragao.github.io",))
     with TestClient(app) as client:
         response = client.options(
             "/predict",
             headers={
-                "Origin": "https://umbura.github.io",
+                "Origin": "https://iago-aragao.github.io",
                 "Access-Control-Request-Method": "POST",
                 "Access-Control-Request-Headers": "content-type",
             },
         )
 
     assert response.status_code == 200
-    assert response.headers["access-control-allow-origin"] == "https://umbura.github.io"
+    assert response.headers["access-control-allow-origin"] == "https://iago-aragao.github.io"
     assert "POST" in response.headers["access-control-allow-methods"]
 
 
 def test_unlisted_browser_origin_is_rejected_by_preflight() -> None:
-    app = create_cors_app(_settings(), origins=("https://umbura.github.io",))
+    app = create_cors_app(_settings(), origins=("https://iago-aragao.github.io",))
     with TestClient(app) as client:
         response = client.options(
             "/predict",
