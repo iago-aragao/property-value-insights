@@ -10,7 +10,7 @@ services:
       - key: PORT
         value: "8000"
       - key: PVI_CORS_ORIGINS
-        value: https://umbura.github.io
+        value: https://iago-aragao.github.io
       - key: LOG_LEVEL
         value: INFO
       - key: MAX_BATCH_SIZE

@@ -7,7 +7,7 @@
 | projeto/pacote | `1.0.1` |
 | API | `0.5.0-rc1` |
 | modelo | `0.4.0-rc1` |
-| imagem | `ghcr.io/umbura/property-value-insights:1.0.1` |
+| imagem | `ghcr.io/iago-aragao/property-value-insights:1.0.1` |
 
 A promoção de patch consolida documentação, governança, organização e
 publicação. Ela não modifica o modelo, o Joblib, o manifesto, os hashes, os dados

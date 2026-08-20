@@ -3,7 +3,7 @@
 Sistema de estimativa de preços residenciais com Machine Learning, com demonstração
 web pública, API reproduzível e imagem Docker pronta para execução.
 
-**[Abrir demonstração online](https://umbura.github.io/property-value-insights/) · [Abrir documentação interativa da API](https://property-value-insights-api.onrender.com/docs)**
+**[Abrir demonstração online](https://iago-aragao.github.io/property-value-insights/) · [Abrir documentação interativa da API](https://property-value-insights-api.onrender.com/docs)**
 
 A entrega atual é a release `v1.0.1`. O projeto foi desenvolvido a partir de um
 desafio técnico de previsão de preços de imóveis, mas estruturado como uma solução
@@ -57,7 +57,7 @@ final intocado.
 
 A forma mais simples de avaliar o projeto é pela demonstração pública:
 
-**<https://umbura.github.io/property-value-insights/>**
+**<https://iago-aragao.github.io/property-value-insights/>**
 
 Não é necessário instalar Docker, Python, `uv`, clonar o repositório ou baixar
 qualquer arquivo. O site permite alterar as características de um imóvel, enviar
@@ -94,7 +94,7 @@ A instalação oficial está disponível em <https://docs.docker.com/get-started
 No PowerShell, Bash ou terminal equivalente:
 
 ```powershell
-docker pull ghcr.io/umbura/property-value-insights:1.0.1
+docker pull ghcr.io/iago-aragao/property-value-insights:1.0.1
 ```
 
 `docker pull` baixa a imagem da aplicação para a máquina. Essa imagem já contém o
@@ -104,7 +104,7 @@ aprovado e seu manifesto.
 ### 2. Execute a API
 
 ```powershell
-docker run --rm --name property-value-insights -p 8000:8000 --read-only --tmpfs /tmp --security-opt no-new-privileges:true ghcr.io/umbura/property-value-insights:1.0.1
+docker run --rm --name property-value-insights -p 8000:8000 --read-only --tmpfs /tmp --security-opt no-new-privileges:true ghcr.io/iago-aragao/property-value-insights:1.0.1
 ```
 
 Quando o serviço estiver pronto, abra no navegador:
@@ -223,7 +223,7 @@ desejam reproduzir o ambiente, inspecionar os dados ou executar o pipeline.
 | Componente | Identidade vigente |
 | --- | --- |
 | Projeto/pacote | `property-value-insights 1.0.1` |
-| Demonstração web | `https://umbura.github.io/property-value-insights/` |
+| Demonstração web | `https://iago-aragao.github.io/property-value-insights/` |
 | API pública | `https://property-value-insights-api.onrender.com` |
 | Contrato da API | `0.5.0-rc1` |
 | Modelo servido | `property_value_hist_gradient_boosting_physical 0.4.0-rc1` |
@@ -269,7 +269,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/0.12.1/install.p
 Reabra o PowerShell e execute:
 
 ```powershell
-git clone https://github.com/Umbura/property-value-insights.git
+git clone https://github.com/iago-aragao/property-value-insights.git
 cd property-value-insights
 uv --version
 uv python install 3.13
@@ -319,10 +319,10 @@ SHAP nem os dados brutos e executa somente a API de inferência.
 A release `v1.0.1` está disponível no GitHub Container Registry:
 
 ```bash
-docker pull ghcr.io/umbura/property-value-insights:1.0.1
+docker pull ghcr.io/iago-aragao/property-value-insights:1.0.1
 docker run --rm -p 8000:8000 --read-only --tmpfs /tmp \
   --security-opt no-new-privileges:true \
-  ghcr.io/umbura/property-value-insights:1.0.1
+  ghcr.io/iago-aragao/property-value-insights:1.0.1
 ```
 
 A tag `latest` acompanha a release estável. Para reprodução estrita, use o digest
