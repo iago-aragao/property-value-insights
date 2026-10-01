@@ -31,7 +31,7 @@ explainability = [
     "shap==0.52.0",
 ]
 dev = [
-    "httpx2==2.9.1",
+    "httpx2==2.10.0",
     "ipykernel>=6.29,<7",
     "matplotlib>=3.9,<4",
     "nbclient>=0.10,<1",
